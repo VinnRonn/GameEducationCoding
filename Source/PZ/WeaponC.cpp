@@ -86,7 +86,7 @@ void AWeapon::WeaponTrace()
 		false, 1.0f, 0, 0.5f);
 	
 	FHitResult OutHit;
-	GetWorld()->LineTraceSingleByChannel(OutHit, TraceStart, TraceEnd, ECollisionChannel::ECC_WorldStatic);
+	GetWorld()->LineTraceSingleByChannel(OutHit, TraceStart, TraceEnd, ECollisionChannel::ECC_Visibility);
 
 	if (OutHit.bBlockingHit)
 	{
