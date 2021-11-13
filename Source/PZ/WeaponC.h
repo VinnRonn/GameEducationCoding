@@ -5,7 +5,7 @@
 #include <string>
 
 #include "CoreMinimal.h"
-#include "ReloadableInterfaceC.h"
+#include "Interfaces/ReloadableInterfaceC.h"
 #include "GameFramework/Actor.h"
 #include "WeaponC.generated.h"
 
@@ -13,9 +13,7 @@
 UCLASS()
 class PZ_API AWeapon : public AActor, public IReloadableInterface
 {
-
 	
-
 	GENERATED_BODY()
 
 public:	
@@ -23,28 +21,28 @@ public:
 	AWeapon();
 	
 	UPROPERTY(BlueprintReadWrite)
-	int32 MaxAmmo = 12;
+	int32 MaxAmmo;
 	
 	UPROPERTY(BlueprintReadWrite)
-	int32 AmmoPerClip = 4;
+	int32 AmmoPerClip;
 
 	UPROPERTY(BlueprintReadWrite)
-	int32 Damage = 6;
+	int32 Damage;
 
 	UPROPERTY(BlueprintReadWrite)
-	float ReloadDuration = 2.0;
+	float ReloadDuration;
 
 	UPROPERTY(BlueprintReadWrite)
-	int32 Range = 1000;
+	int32 Range;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	FName MuzzleSocketName = "MuzzleSocket";
+	FName MuzzleSocketName;
 
 	UPROPERTY(BlueprintReadWrite)
-	int32 CurrentAmmo = 12;
+	int32 CurrentAmmo;
 
 	UPROPERTY(BlueprintReadWrite)
-	int32 CurrentAmmoClip = 4;
+	int32 CurrentAmmoClip;
 
 	UPROPERTY(BlueprintReadWrite)
 	bool bIsReloading;
@@ -56,22 +54,29 @@ public:
 	UFUNCTION(BlueprintCallable)
 	bool CanFire();
 	
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void Reload();
+
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	bool CanReload();
+
+	UFUNCTION(BlueprintCallable)
+	void Reloading();
 	
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = "Components")
 	USkeletalMeshComponent* WeaponMesh;
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = "Components")
 	USceneComponent* SceneComponent;
-	
+
+	UFUNCTION()
+	void UseAmmo();
+
+
 	UFUNCTION(BlueprintCallable,Category="Utilities|Transformation", meta=(Keywords="Bone") )
 	void WeaponTrace();
-	
-	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	void Reaload();
 
-	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	bool CanReload();
-
+	FTimerHandle ReloadingTimer;
 	
 protected:
 	// Called when the game starts or when spawned

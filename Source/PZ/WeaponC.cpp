@@ -8,6 +8,7 @@
 #include "Engine/StaticMeshSocket.h"
 #include "Engine/World.h"
 #include "DrawDebugHelpers.h"
+#include "TimerManager.h"
 
 // Sets default values
 AWeapon::AWeapon()
@@ -20,33 +21,23 @@ AWeapon::AWeapon()
 
 	SetRootComponent(SceneComponent);
 	WeaponMesh->SetupAttachment(RootComponent);
+
+	MaxAmmo = 12;
+	AmmoPerClip = 4;
+	Damage = 6;
+	ReloadDuration = 2.0;
+	Range = 1000;
+	MuzzleSocketName = "MuzzleSocket";
+	CurrentAmmo = 12;
+	CurrentAmmoClip = 4;
+	bIsReloading = false;
 }
 
-FString InClip = "In Clip ";
-
-void AWeapon::Fire()
+// Called when the game starts or when spawned
+void AWeapon::BeginPlay()
 {
-	if (CanFire())
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Green,
-			InClip + FString::FromInt(CurrentAmmoClip));
-		WeaponTrace();
-	}
-	
-	--CurrentAmmoClip;
-	--CurrentAmmo;  //нужно подумать на эту тему
-	
-	if (CurrentAmmoClip == 0)
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Red,
-			InClip + FString::FromInt(CurrentAmmoClip));
-		
-	}
-	if (EMouseButtons::Left)
-	{
-		FString Test21 = "Piu-Piu";
-		GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Red, Test21);	
-	}
+	Super::BeginPlay();
+	check(WeaponMesh);
 }
 
 bool AWeapon::CanFire()
@@ -57,16 +48,40 @@ bool AWeapon::CanFire()
 	}
 	return false;
 }
-void AWeapon::Reaload_Implementation()
+
+
+FString InClip = "In Clip ";
+FString CurrAmmo = "CurAmmo ";
+
+void AWeapon::UseAmmo()
 {
-	if (CanReload())
-	{
-		CurrentAmmoClip += AmmoPerClip - CurrentAmmoClip;
-		GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Red,
-			InClip + FString::FromInt(CurrentAmmoClip));
-	}
+	--CurrentAmmoClip;
 }
 
+void AWeapon::Fire()
+{
+	if (CanFire())
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::White,
+			CurrAmmo + FString::FromInt(CurrentAmmo));
+		WeaponTrace();
+		
+		UseAmmo();
+		--CurrentAmmo;
+		if(CurrentAmmoClip == 0)
+		{
+			Reload_Implementation();
+		}
+	}
+	
+	GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Yellow,
+			InClip + FString::FromInt(CurrentAmmoClip));
+
+}
+
+
+//FTimerHandle ReloadingTimer;
+//~ Start Reloading Interface
 bool AWeapon::CanReload_Implementation()
 {
 	if (CurrentAmmo > 0 && CurrentAmmoClip < AmmoPerClip)
@@ -75,6 +90,37 @@ bool AWeapon::CanReload_Implementation()
 	}
 	return false;
 }
+
+void AWeapon::Reload_Implementation()
+{
+	if (CanReload())
+	{
+		bIsReloading = true;
+		GetWorldTimerManager().SetTimer(ReloadingTimer, this,
+			&AWeapon::Reloading,  1.0f, false, -1);
+	}
+}
+
+//~ End Reloading Interface
+void AWeapon::Reloading()
+{
+	GEngine->AddOnScreenDebugMessage(-1, ReloadDuration, FColor::Emerald,
+			TEXT("Reloading!!!"));
+	if (CurrentAmmo >= AmmoPerClip)
+	{
+		CurrentAmmoClip += AmmoPerClip - CurrentAmmoClip;
+		GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Yellow,
+			InClip + FString::FromInt(CurrentAmmoClip));
+	} else
+	{
+		CurrentAmmoClip += CurrentAmmo;
+		GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Yellow,
+InClip + FString::FromInt(CurrentAmmoClip));
+	}
+	bIsReloading = false;
+}
+
+
 void AWeapon::WeaponTrace()
 {
 	
@@ -96,15 +142,6 @@ void AWeapon::WeaponTrace()
 }
 
 
-
-// Called when the game starts or when spawned
-void AWeapon::BeginPlay()
-{
-	Super::BeginPlay();
-
-	check(WeaponMesh);
-	
-}
 
 // Called every frame
 void AWeapon::Tick(float DeltaTime)

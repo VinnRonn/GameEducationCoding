@@ -17,8 +17,7 @@ class IReloadableInterface
 
 public:
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	void Reaload();
-
+	void Reload();
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	bool CanReload();
 };
