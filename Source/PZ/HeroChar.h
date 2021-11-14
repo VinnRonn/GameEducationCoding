@@ -1,5 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #pragma once
 
 #include "CoreMinimal.h"
@@ -19,7 +17,25 @@ public:
 	int32 Health;
 
 	UPROPERTY(BlueprintReadWrite)
+	int32 HealthUp;
+
+	UPROPERTY(BlueprintReadWrite)
 	int32 Stamina;
+	
+	FTimerHandle HealthRecoveryHandle;
+
+	UPROPERTY(BlueprintReadWrite)
+	float RecoveryHealthDuration;
+
+	void RecoveryHeath();
+
+	FTimerHandle DamageHandle;
+	
+	UPROPERTY(BlueprintReadWrite)
+	float DamageRate;
+
+	UFUNCTION(BlueprintCallable)
+	void GetDamage();
 
 protected:
 	// Called when the game starts or when spawned

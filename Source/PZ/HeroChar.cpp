@@ -2,33 +2,65 @@
 
 
 #include "HeroChar.h"
+#include "TimerManager.h"
 
 // Sets default values
 AHeroChar::AHeroChar()
 {
- 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
 }
 
-// Called when the game starts or when spawned
 void AHeroChar::BeginPlay()
 {
 	Super::BeginPlay();
+
+	Health = 80;
+	HealthUp = 3;
+	RecoveryHealthDuration = 2.0f;
+	DamageRate = 1.0f;
+	GetWorldTimerManager().SetTimer(HealthRecoveryHandle, this, &AHeroChar::RecoveryHeath,
+		RecoveryHealthDuration, true, -1);
+	GetWorldTimerManager().SetTimer(DamageHandle, this, &AHeroChar::GetDamage,
+		DamageRate, true, -1);
 	
 }
 
-// Called every frame
+void AHeroChar::RecoveryHeath()
+{
+	if (Health < 100)
+	{
+		if ((Health + HealthUp) > 100)
+		{
+			Health = 100;
+		} else
+		{
+			Health = Health + 3;
+		}
+		GEngine->AddOnScreenDebugMessage(-1, 1.0f,
+			FColor::Green, TEXT("Curren Health: ") + FString::FromInt(Health));
+	}
+}
+
+void AHeroChar::GetDamage()
+{
+	if (Health > 90)
+	{
+		//GetWorldTimerManager().UnPauseTimer(DamageHandle);
+		Health -= 10.0f;
+		GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Red,
+			TEXT("Take Damage!!!") + FString::FromInt(Health));
+	} 
+}
+
+
 void AHeroChar::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
 
-// Called to bind functionality to input
 void AHeroChar::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
-
 }
 
