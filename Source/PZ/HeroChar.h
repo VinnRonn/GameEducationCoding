@@ -4,6 +4,10 @@
 #include "GameFramework/Character.h"
 #include "HeroChar.generated.h"
 
+DECLARE_EVENT(AHeroChar, FOnDestroyActor);
+DECLARE_EVENT(AHeroChar, FOnApplyDamage);
+//DECLARE_DELEGATE( FOnApplyDamage);
+
 UCLASS()
 class PZ_API AHeroChar : public ACharacter
 {
@@ -36,10 +40,23 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void GetDamage();
+	
+	FOnDestroyActor OnDestroyActor;
+
+	FOnApplyDamage OnApplyDamage;
+
+
+	
+	UFUNCTION(BlueprintCallable)
+	void DestroyActor();
+
+	UFUNCTION(BlueprintCallable)
+	void ApplyDamage();
 
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+
 
 public:	
 	// Called every frame

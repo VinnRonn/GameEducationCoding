@@ -4,11 +4,11 @@
 #include "HeroChar.h"
 #include "TimerManager.h"
 
-// Sets default values
+
+
 AHeroChar::AHeroChar()
 {
 	PrimaryActorTick.bCanEverTick = true;
-
 }
 
 void AHeroChar::BeginPlay()
@@ -23,6 +23,9 @@ void AHeroChar::BeginPlay()
 		RecoveryHealthDuration, true, -1);
 	GetWorldTimerManager().SetTimer(DamageHandle, this, &AHeroChar::GetDamage,
 		DamageRate, true, -1);
+
+	OnDestroyActor.AddUFunction(this, "DestroyActor");
+	OnApplyDamage.AddUFunction(this, "ApplyDamage");
 	
 }
 
@@ -44,13 +47,28 @@ void AHeroChar::RecoveryHeath()
 
 void AHeroChar::GetDamage()
 {
-	if (Health > 90)
+	if (Health > 0)
 	{
-		//GetWorldTimerManager().UnPauseTimer(DamageHandle);
-		Health -= 10.0f;
-		GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Red,
-			TEXT("Take Damage!!!") + FString::FromInt(Health));
-	} 
+		OnApplyDamage.Broadcast();
+	} else
+	{
+		OnDestroyActor.Broadcast();
+	}
+}
+
+void AHeroChar::DestroyActor()
+{
+		GEngine->AddOnScreenDebugMessage(-1, 2.0f,
+	FColor::Yellow, TEXT("HeroChar Destroyed!!!"));
+		Destroy();
+
+}
+
+void AHeroChar::ApplyDamage()
+{
+	Health -= 10.0f;
+	GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Cyan,
+		TEXT("Take Damage!!!") + FString::FromInt(Health));
 }
 
 
