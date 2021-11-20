@@ -40,7 +40,7 @@ void AWeapon::BeginPlay()
 	check(WeaponMesh);
 }
 
-bool AWeapon::CanFire()
+bool AWeapon::CanFire() const
 {
 	if (CurrentAmmoClip > 0)
 	{
@@ -82,7 +82,7 @@ void AWeapon::Fire()
 
 //FTimerHandle ReloadingTimer;
 //~ Start Reloading Interface
-bool AWeapon::CanReload_Implementation()
+bool AWeapon::CanReload_Implementation() const
 {
 	if (CurrentAmmo > 0 && CurrentAmmoClip < AmmoPerClip)
 	{
@@ -120,7 +120,6 @@ InClip + FString::FromInt(CurrentAmmoClip));
 	bIsReloading = false;
 }
 
-
 void AWeapon::WeaponTrace()
 {
 	
@@ -132,7 +131,7 @@ void AWeapon::WeaponTrace()
 		false, 1.0f, 0, 0.5f);
 	
 	FHitResult OutHit;
-	GetWorld()->LineTraceSingleByChannel(OutHit, TraceStart, TraceEnd, ECollisionChannel::ECC_Visibility);
+	GetWorld()->LineTraceSingleByChannel(OutHit, TraceStart, TraceEnd, ECollisionChannel::ECC_WorldStatic);
 
 	if (OutHit.bBlockingHit)
 	{

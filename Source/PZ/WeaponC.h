@@ -10,6 +10,8 @@
 #include "WeaponC.generated.h"
 
 
+
+
 UCLASS()
 class PZ_API AWeapon : public AActor, public IReloadableInterface
 {
@@ -52,13 +54,13 @@ public:
 	void Fire();
 	
 	UFUNCTION(BlueprintCallable)
-	bool CanFire();
+	bool CanFire() const;
 	
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void Reload();
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	bool CanReload();
+	bool CanReload() const;
 
 	UFUNCTION(BlueprintCallable)
 	void Reloading();
@@ -71,6 +73,7 @@ public:
 
 	UFUNCTION()
 	void UseAmmo();
+
 
 
 	UFUNCTION(BlueprintCallable,Category="Utilities|Transformation", meta=(Keywords="Bone") )
