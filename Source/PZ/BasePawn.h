@@ -16,6 +16,7 @@ class PZ_API ABasePawn : public APawn
 
 public:
 	ABasePawn();
+	
 
 	UPROPERTY(VisibleAnywhere)
 	USphereComponent* SphereComp;
@@ -23,6 +24,23 @@ public:
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite)
 	USceneComponent* SceneComp;
 
+	/*UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	USkeletalMeshComponent* SkeletalMeshComp;*/
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	UStaticMeshComponent* StaticMeshComp;
+
+	UPROPERTY()
+	UMaterialInterface* PawnMaterial;
+	UPROPERTY()
+	UMaterialInterface* Material;
+	UPROPERTY()
+	UMaterialInstanceDynamic* NewPawnMaterial;
+	
+
+
+	//UMaterialInterface* NewPawnMaterial;
+	
 	UPROPERTY(VisibleAnywhere)
 	UPawnMovementComponent* MovementComp;
 
@@ -33,10 +51,23 @@ public:
 	UCameraComponent* CameraComp;
 
 	virtual UPawnMovementComponent* GetMovementComponent() const override; //посмотреть подробнее
-	
 
+	UPROPERTY(Transient)
+	AActor* ViewActor;
+
+	/*UPROPERTY()
+	int32 MaterialIndex;*/
+	
 	void MoveForward(float AxisValue);
 	void MoveRight(float AxisValue);
+	
+	void CameraBlendComplete();
+
+	UFUNCTION(BlueprintCallable)
+	void ChangeMaterial();
+
+	UFUNCTION(BlueprintCallable)
+	void RevertMaterial();
 
 protected:
 	virtual void BeginPlay() override;

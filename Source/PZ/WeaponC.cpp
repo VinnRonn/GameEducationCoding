@@ -125,7 +125,7 @@ void AWeapon::WeaponTrace()
 	
 	const FTransform SocketTransform = WeaponMesh->GetSocketTransform(MuzzleSocketName);
 	const FVector TraceStart = SocketTransform.GetLocation();
-	const FVector TraceEnd =  TraceStart + (SocketTransform.GetRotation().GetForwardVector() * Range);
+	const FVector TraceEnd = TraceStart + (SocketTransform.GetRotation().GetForwardVector() * Range);
 	
 	DrawDebugLine(GetWorld(), TraceStart, TraceEnd, FColor::Green,
 		false, 1.0f, 0, 0.5f);
