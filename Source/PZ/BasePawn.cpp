@@ -1,5 +1,6 @@
 #include "BasePawn.h"
 
+#include "DamageAreaC.h"
 #include "SpyCameraC.h"
 #include "Camera/CameraComponent.h"
 #include "Engine/CollisionProfile.h"
@@ -50,6 +51,9 @@ ABasePawn::ABasePawn()
 	bUseControllerRotationRoll = true;
 
 	PawnMaterial = StaticMeshComp->GetMaterial(0);
+
+	Health.CurrenHealth = 100;
+	TakeDamage = 2;
 	
 }
 
@@ -99,6 +103,19 @@ void ABasePawn::RevertMaterial()
 	StaticMeshComp->SetMaterial(0, PawnMaterial);
 }
 
+void ABasePawn::Damage()
+{
+	
+	if (Health.CurrenHealth > TakeDamage)
+	{
+		Health.CurrenHealth -= TakeDamage;
+	} else
+	{
+		Health.CurrenHealth = 0;
+	}
+	GEngine->AddOnScreenDebugMessage(-1, 0.5f, FColor::Red, FString::FromInt(Health.CurrenHealth));
+}
+
 void ABasePawn::BeginPlay()
 {
 	Super::BeginPlay();
@@ -125,6 +142,17 @@ void ABasePawn::BeginPlay()
 			/*camera->OnChangeMaterial.AddDynamic(this, &ABasePawn::ChangeMaterial);
 			camera->OnRevertMaterial.AddDynamic(this, &ABasePawn::RevertMaterial);*/
 		}
+	}
+	TArray<AActor*> DamageArea;
+	UGameplayStatics::GetAllActorsOfClass(this, ADamageAreaC::StaticClass(), DamageArea);
+	for(AActor* DA : DamageArea)
+	{
+		ADamageAreaC* area = Cast<ADamageAreaC>(DA);
+		if (area)
+		{
+			area->OnDamage.AddUFunction(this, "Damage");
+		}
+		
 	}
 }
 

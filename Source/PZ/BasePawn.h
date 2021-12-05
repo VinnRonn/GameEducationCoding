@@ -9,6 +9,14 @@ class UCameraComponent;
 class USpringArmComponent;
 class USphereComponent;
 
+
+USTRUCT()
+struct FHealth
+{
+	GENERATED_BODY()
+	int32 CurrenHealth;
+};
+
 UCLASS()
 class PZ_API ABasePawn : public APawn
 {
@@ -17,7 +25,6 @@ class PZ_API ABasePawn : public APawn
 public:
 	ABasePawn();
 	
-
 	UPROPERTY(VisibleAnywhere)
 	USphereComponent* SphereComp;
 
@@ -37,8 +44,6 @@ public:
 	UPROPERTY()
 	UMaterialInstanceDynamic* NewPawnMaterial;
 	
-
-
 	//UMaterialInterface* NewPawnMaterial;
 	
 	UPROPERTY(VisibleAnywhere)
@@ -68,6 +73,14 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void RevertMaterial();
+
+	UFUNCTION(BlueprintCallable)
+	void Damage();
+
+	FHealth Health;
+
+	int32 TakeDamage;
+
 
 protected:
 	virtual void BeginPlay() override;
