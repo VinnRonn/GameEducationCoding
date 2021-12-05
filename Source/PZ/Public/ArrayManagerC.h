@@ -19,7 +19,14 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	int32 CubeAmount;
 
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION()
+	static FVector GeneratePosition();
+	UFUNCTION()
+	static FRotator GenerateRotation();
+	
+	UFUNCTION()
+	void StartGenerate();
+	UFUNCTION()
 	void GenerateCubes(int32 value);
 
 	// ReSharper disable once CppUE4ProbableMemoryIssuesWithUObjectsInContainer
@@ -28,8 +35,10 @@ public:
 	UFUNCTION()
 	void DestroyCubes();
 
+	int32 TimeToGenerate;
 	int32 TimeToDestroy;
-	
+
+	FTimerHandle GeneratorTimer;
 	FTimerHandle DestroyTimer;
 
 protected:

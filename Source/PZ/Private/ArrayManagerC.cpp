@@ -13,20 +13,33 @@ AArrayManagerC::AArrayManagerC()
 
 }
 
+FVector AArrayManagerC::GeneratePosition()
+{
+	const FVector CubePosition(rand() % 1000 + 1.f, rand() % 1000 + 1.f, rand() % 1000 + 1);
+	return CubePosition;
+	
+}
+
+FRotator AArrayManagerC::GenerateRotation()
+{
+	const FRotator CubeRotation(0.f, 0.f, 0.f);
+	return CubeRotation;
+}
+
+void AArrayManagerC::StartGenerate()
+{
+	GenerateCubes(CubeAmount);
+}
+
 void AArrayManagerC::GenerateCubes(int32 value)
 {
 	for (int32 i = 0; i < value; i++)
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Blue, FString::FromInt(i));
-		FVector CubePosition(rand() % 1000 + 1.f, rand() % 1000 + 1.f, rand() % 1000 + 1);
-		/*CubePosition.X = rand() % 1000 + 1.f;
-		CubePosition.Y = rand() % 1000 + 1.f;
-		CubePosition.Z = 500.f;*/
-		FRotator CubeRotation(0.f, 0.f, 0.f);
-		ATmpCubeC* NewCube = GetWorld()->SpawnActor<ATmpCubeC>(CubePosition, CubeRotation);
+		ATmpCubeC* NewCube = GetWorld()->SpawnActor<ATmpCubeC>(GeneratePosition(), GenerateRotation());
 		TestArray.Add(NewCube);
 	}
-	
+	GetWorldTimerManager().SetTimer(DestroyTimer, this, &ThisClass::DestroyCubes, TimeToDestroy, false);
 }
 
 // Called when the game starts or when spawned
@@ -37,13 +50,15 @@ void AArrayManagerC::BeginPlay()
 	CubeAmount = rand() % 100 + 1;
 	GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Green, FString::FromInt(CubeAmount));
 
-	GenerateCubes(CubeAmount);
-	//TestArray(CubeAmount, );
+	
+	//GenerateCubes(CubeAmount);
+
 	GEngine->AddOnScreenDebugMessage(-1, 6.f, FColor::Green, FString::FromInt(TestArray.Num()));
 
+	TimeToGenerate = 1.f;
 	TimeToDestroy = 5.f;
 	
-	GetWorldTimerManager().SetTimer(DestroyTimer, this, &ThisClass::DestroyCubes, TimeToDestroy, false);
+	GetWorldTimerManager().SetTimer(GeneratorTimer, this, &ThisClass::StartGenerate, TimeToGenerate, false);
 	
 }
 
