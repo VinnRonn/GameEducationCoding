@@ -9,9 +9,6 @@
 #include "GameFramework/Actor.h"
 #include "WeaponC.generated.h"
 
-
-
-
 UCLASS()
 class PZ_API AWeapon : public AActor, public IReloadableInterface
 {
